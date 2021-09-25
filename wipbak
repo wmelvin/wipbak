@@ -1,8 +1,21 @@
 #!/usr/bin/env bash
 
+# ---------------------------------------------------------------------
 #  wipbak.sh
 #  Work-in-progress backup script.
 #  Modified 2021-09-25.
+#
+#  Put this script in a directory that is in the PATH.  For example,
+#  if this script is in a 'bin' directory under the home directory,
+#  add this to .bashrc:
+#    export PATH=$PATH:$HOME/bin
+#
+#  To use this script, the directory where it is to be run must have:
+#  1. A file named 'wipbak-list.txt' that contains the names of files
+#     for which backup copies are to be made.
+#  2. A sub-directory named '_0_bak' where the copies will be placed.
+#
+# ---------------------------------------------------------------------
 
 
 LISTFILE="wipbak-list.txt"
