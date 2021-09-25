@@ -24,33 +24,47 @@ BAKDIR="_0_bak"
 
 TIMESTAMP="$(date +%Y%m%d_%H%M%S)"
 
+VERBOSE=
 
 function bakwip
 {
-  dt="$1"
-  wip="$2"
-  if [ ! -e "$wip" ]; then
-    printf "\nERROR: File not found: ${wip}\n"
-    printf "Make sure $LISTFILE is up to date.\n\n"
-    exit 1
-  fi
-  printf "${wip}\n"
-  prevbak=$(find ./_0_bak -maxdepth 1 -type f | grep "/${wip}" | sort -r | head -n1)
-  if [ -z "${prevbak}" ]; then
-    printf "  No previous backup.\n"
-  else
-    # printf "  Previous backup: '${prevbak}'\n"
-    diffresult=$(diff -q "${prevbak}" "${wip}")
-    if [ -z "${diffresult}" ]; then
-      printf "  Same as previous backup.\n"
-      return
+    dt="$1"
+    wip="$2"
+    if [ ! -e "$wip" ]; then
+        printf "\nERROR: File not found: ${wip}\n"
+        printf "Make sure $LISTFILE is up to date.\n\n"
+        exit 1
     fi
-  fi
-  bak="./_0_bak/${wip}.${dt}.bak"
-  printf "  Copy to ${bak}\n"
-  cp "$wip" "$bak"
-  chmod 400 "$bak"
+    printf "${wip}\n"
+    prevbak=$(find ./${BAKDIR} -maxdepth 1 -type f | grep "/${wip}\..*\.bak" | sort -r | head -n1)
+    if [ -z "${prevbak}" ]; then
+        printf "  No previous backup.\n"
+    else
+        if [ "$VERBOSE" ]; then
+            printf "  Previous backup: '${prevbak}'\n"
+        fi
+        diffresult=$(diff -q "${prevbak}" "${wip}")
+        if [ -z "${diffresult}" ]; then
+            printf "  Same as previous backup.\n"
+            return
+        fi
+    fi
+    bak="./_0_bak/${wip}.${dt}.bak"
+    printf "  Copy to ${bak}\n"
+    cp "$wip" "$bak"
+    chmod 400 "$bak"
 }
+
+while getopts 'v' OPT
+do
+    case $OPT in
+        v)  VERBOSE=1
+            ;;
+        ?)  printf "Usage: wipbak [-v]\nWhere: -v = Verbose.\n\n"
+            exit 2
+            ;;
+    esac
+done
 
 
 if [ ! -e "./${LISTFILE}" ]; then
