@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+#  wipbak.sh
+#  Work-in-progress backup script.
+#  Modified 2021-09-25.
+
+
+LISTFILE="wipbak-list.txt"
+
+BAKDIR="_0_bak"
+
+TIMESTAMP="$(date +%Y%m%d_%H%M%S)"
+
+
+function bakwip
+{
+  dt="$1"
+  wip="$2"
+  if [ ! -e "$wip" ]; then
+    printf "\nERROR: File not found: ${wip}\n"
+    printf "Make sure $LISTFILE is up to date.\n\n"
+    exit 1
+  fi
+  printf "${wip}\n"
+  prevbak=$(find ./_0_bak -maxdepth 1 -type f | grep "/${wip}" | sort -r | head -n1)
+  if [ -z "${prevbak}" ]; then
+    printf "  No previous backup.\n"
+  else
+    # printf "  Previous backup: '${prevbak}'\n"
+    diffresult=$(diff -q "${prevbak}" "${wip}")
+    if [ -z "${diffresult}" ]; then
+      printf "  Same as previous backup.\n"
+      return
+    fi
+  fi
+  bak="./_0_bak/${wip}.${dt}.bak"
+  printf "  Copy to ${bak}\n"
+  cp "$wip" "$bak"
+  chmod 400 "$bak"
+}
+
+
+if [ ! -e "./${LISTFILE}" ]; then
+    printf "\nList file '${LISTFILE}' not found in current directory.\n"
+    exit 1
+fi
+
+if [ ! -d "./${BAKDIR}" ]; then
+    printf "\nBackup directory '${BAKDIR}' not found in current directory.\n"
+    exit 1
+fi
+
+for filename in $(cat "$LISTFILE")
+do
+    bakwip "$TIMESTAMP" "$filename"
+done
+
+printf "\n"
+read -t7 -n1 -r -p "Press [Enter] to continue (or wait for timeout). "
+printf "\n\nListing files in ${BAKDIR} (most recent last):\n"
+
+ls -tr1 "./${BAKDIR}"
