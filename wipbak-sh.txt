@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+#  wipbak.sh
+#  Custom local work-in-progress backup script.
+#  Modified 2021-09-24.
+
+
+function bakwip
+{
+  dt="$1"
+  wip="$2"
+  printf "${wip}\n"
+  prevbak=$(find ./_0_bak -maxdepth 1 -type f | grep "/${wip}" | sort -r | head -n1)
+  if [ -z "${prevbak}" ]; then
+    printf "  No previous backup.\n"
+  else
+    # printf "  Previous backup: '${prevbak}'\n"
+    diffresult=$(diff -q "${prevbak}" "${wip}")
+    if [ -z "${diffresult}" ]; then
+      printf "  Same as previous backup.\n"
+      return
+    fi
+  fi
+  bak="./_0_bak/${wip}.${dt}.bak"
+  printf "  Copy to ${bak}\n"
+  cp "$wip" "$bak"
+  chmod 400 "$bak"
+}
+
+
+time_stamp="$(date +%Y%m%d_%H%M%S)"
+
+#--- Files to back-up:
+
+bakwip "$time_stamp" "wipbak.sh"
+
+#---
+
+printf "\n"
+read -t7 -n1 -r -p "Press [Enter] to continue (or wait for timeout). "
+printf "\n\nListing files in _0_bak:\n"
+
+ls -tr1 "./_0_bak"
