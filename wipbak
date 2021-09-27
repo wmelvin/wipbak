@@ -3,7 +3,7 @@
 # ---------------------------------------------------------------------
 #  wipbak.sh
 #  Work-in-progress backup script.
-#  Modified 2021-09-25.
+#  Modified 2021-09-27.
 #
 #  Put this script in a directory that is in the PATH.  For example,
 #  if this script is in a 'bin' directory under the home directory,
@@ -19,12 +19,12 @@
 
 
 LISTFILE="wipbak-list.txt"
-
 BAKDIR="_0_bak"
 
 TIMESTAMP="$(date +%Y%m%d_%H%M%S)"
 
 VERBOSE=
+
 
 function bakwip
 {
@@ -36,7 +36,15 @@ function bakwip
         exit 1
     fi
     printf "${wip}\n"
-    prevbak=$(find ./${BAKDIR} -maxdepth 1 -type f | grep "/${wip}\..*\.bak" | sort -r | head -n1)
+
+    pattern="/${wip//./\\.}\.[0-9]{8}_[0-9]{6}\.bak"
+
+    if [ "$VERBOSE" ]; then
+        printf "  Pattern: '${pattern}'\n"
+    fi
+
+    prevbak=$(find ./${BAKDIR} -maxdepth 1 -type f | grep -P "${pattern}" | sort -r | head -n1)
+
     if [ -z "${prevbak}" ]; then
         printf "  No previous backup.\n"
     else
@@ -55,6 +63,7 @@ function bakwip
     chmod 400 "$bak"
 }
 
+
 while getopts 'v' OPT
 do
     case $OPT in
@@ -65,7 +74,6 @@ do
             ;;
     esac
 done
-
 
 if [ ! -e "./${LISTFILE}" ]; then
     printf "\nList file '${LISTFILE}' not found in current directory.\n"
