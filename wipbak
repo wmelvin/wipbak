@@ -18,7 +18,10 @@
 # ---------------------------------------------------------------------
 
 
+VERSION="210927.1"
+
 LISTFILE="wipbak-list.txt"
+
 BAKDIR="_0_bak"
 
 TIMESTAMP="$(date +%Y%m%d_%H%M%S)"
@@ -63,6 +66,7 @@ function bakwip
     chmod 400 "$bak"
 }
 
+printf "\nwipbak (version ${VERSION})\n\n"
 
 while getopts 'v' OPT
 do
