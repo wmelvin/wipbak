@@ -3,7 +3,7 @@
 # ---------------------------------------------------------------------
 #  wipbak.sh
 #  Work-in-progress backup script.
-#  Modified 2021-09-27.
+#  Modified 2021-10-03.
 #
 #  Put this script in a directory that is in the PATH.  For example,
 #  if this script is in a 'bin' directory under the home directory,
@@ -18,7 +18,7 @@
 # ---------------------------------------------------------------------
 
 
-VERSION="210927.1"
+VERSION="211003.1"
 
 LISTFILE="wipbak-list.txt"
 
@@ -38,26 +38,29 @@ function bakwip
         printf "Make sure $LISTFILE is up to date.\n\n"
         exit 1
     fi
-    printf "${wip}\n"
+    
+    printf "'${wip}' "
 
     pattern="/${wip//./\\.}\.[0-9]{8}_[0-9]{6}\.bak"
 
     if [ "$VERBOSE" ]; then
-        printf "  Pattern: '${pattern}'\n"
+        printf "\n  Pattern: '${pattern}'\n"
     fi
 
     prevbak=$(find ./${BAKDIR} -maxdepth 1 -type f | grep -P "${pattern}" | sort -r | head -n1)
 
     if [ -z "${prevbak}" ]; then
-        printf "  No previous backup.\n"
+        printf "\n  No previous backup.\n"
     else
         if [ "$VERBOSE" ]; then
-            printf "  Previous backup: '${prevbak}'\n"
+            printf "\n  Previous backup: '${prevbak}'\n"
         fi
         diffresult=$(diff -q "${prevbak}" "${wip}")
         if [ -z "${diffresult}" ]; then
-            printf "  Same as previous backup.\n"
+            printf "(same)\n"
             return
+        else
+            printf "\n"
         fi
     fi
     bak="./_0_bak/${wip}.${dt}.bak"
