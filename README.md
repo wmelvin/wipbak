@@ -32,13 +32,13 @@ You may want to compare a backup to the current file, and perhaps restore some, 
 
 ## History
 
-While working on a file (a script or other document), I would often make copy-and-paste backups along the way. After pasting a copy I would rename the file to have a *.bak* extension, and include the date and time (or an incrementing count) in the file name. These were typically very small projects with a few files in a single folder. 
+While working on a file (a script or other document), I would often make copy-and-paste backups along the way. After pasting a copy I would rename the file to have a *.bak* extension, and include the date and time (or an incremented sequence number) in the file name. These were typically very small projects with a few files in a single folder. 
 
 The manual process of making copy-and-paste backups seemed like a good candidate for automation, so I made a BASH script called `wipbak.sh` in a project I was working on. It was specific to that project. Later I copied it to another project and changed the custom bits for the other project. This went on for a number of small projects on multiple machines (actual and virtual). Then, in one project, I ran into a snag.
 
 There was a file name in the project that revealed a weakness in the simple *grep* command used to select files for backup in the script. It was easy to fix for this specific instance, but I felt like this was a *bug* that would be *lurking* if I did not update all other instances of the script in other places. 
 
-This was not unforseen. Every time I copied `wipbak.sh`, and customized it for another project, I though about generalizing it, or using git, but that was not the task and hand. The script was easy to set up and worked well for my small-project workflow.  However, with a bug to fix across all instances of the script, I decided to make generalizing it *the* task at hand.
+This was not unforeseen. Every time I copied `wipbak.sh`, and customized it for another project, I though about generalizing it, or using git, but that was not the task and hand. The script was easy to set up and worked well for my small-project workflow.  However, with a bug to fix across all instances of the script, I decided to make generalizing it *the* task at hand.
 
 An example of the original per-project script is in `wipbak-sh.txt`.
 
