@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # ---------------------------------------------------------------------
-#  wipbak.sh
+#  wipbak
+#
 #  Work-in-progress backup script.
-#  Modified 2021-10-03.
 #
 #  Put this script in a directory that is in the PATH.  For example,
 #  if this script is in a 'bin' directory under the home directory,
