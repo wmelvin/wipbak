@@ -1,0 +1,12 @@
+# Private archives, notes, etc.
+private/
+notes-private.txt
+
+# Tools config.
+.idea/
+.vscode/
+
+# App-specific.
+_0_bak/
+wipbak-list.txt
+test_grep/
