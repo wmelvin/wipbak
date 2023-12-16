@@ -18,7 +18,7 @@
 # ---------------------------------------------------------------------
 
 
-VERSION="211003.1"
+VERSION="2023.12.1"
 
 LISTFILE="wipbak-list.txt"
 
@@ -34,17 +34,17 @@ function bakwip
     dt="$1"
     wip="$2"
     if [ ! -e "$wip" ]; then
-        printf "\nERROR: File not found: ${wip}\n"
-        printf "Make sure $LISTFILE is up to date.\n\n"
+        printf "\nERROR: File not found: %s\n" "$wip"
+        printf "Make sure %s is up to date.\n\n" "$LISTFILE"
         exit 1
     fi
     
-    printf "'${wip}' "
+    printf "'%s' " "$wip"
 
     pattern="/${wip//./\\.}\.[0-9]{8}_[0-9]{6}\.bak"
 
     if [ "$VERBOSE" ]; then
-        printf "\n  Pattern: '${pattern}'\n"
+        printf "\n  Pattern: '%s'\n" "$pattern"
     fi
 
     prevbak=$(find ./${BAKDIR} -maxdepth 1 -type f | grep -P "${pattern}" | sort -r | head -n1)
@@ -53,7 +53,7 @@ function bakwip
         printf "\n  No previous backup.\n"
     else
         if [ "$VERBOSE" ]; then
-            printf "\n  Previous backup: '${prevbak}'\n"
+            printf "\n  Previous backup: '%s'\n" "$prevbak"
         fi
         diffresult=$(diff -q "${prevbak}" "${wip}")
         if [ -z "${diffresult}" ]; then
@@ -64,12 +64,12 @@ function bakwip
         fi
     fi
     bak="./_0_bak/${wip}.${dt}.bak"
-    printf "  Copy to ${bak}\n"
+    printf "  Copy to %s\n" "$bak"
     cp "$wip" "$bak"
     chmod 400 "$bak"
 }
 
-printf "\nwipbak (version ${VERSION})\n\n"
+printf "\nwipbak (version %s)\n\n" "$VERSION"
 
 while getopts 'v' OPT
 do
@@ -83,22 +83,22 @@ do
 done
 
 if [ ! -e "./${LISTFILE}" ]; then
-    printf "\nList file '${LISTFILE}' not found in current directory.\n"
+    printf "\nList file '%s' not found in current directory.\n" "$LISTFILE"
     exit 1
 fi
 
 if [ ! -d "./${BAKDIR}" ]; then
-    printf "\nBackup directory '${BAKDIR}' not found in current directory.\n"
+    printf "\nBackup directory '%s' not found in current directory.\n" "$BAKDIR"
     exit 1
 fi
 
-for filename in $(cat "$LISTFILE")
+while IFS= read -r filename
 do
     bakwip "$TIMESTAMP" "$filename"
-done
+done < "$LISTFILE"
 
 printf "\n"
 read -t7 -n1 -r -p "Press [Enter] to continue (or wait for timeout). "
-printf "\n\nListing files in ${BAKDIR} (most recent last):\n"
+printf "\n\nListing files in %s (most recent last):\n" "$BAKDIR"
 
 ls -tr1 "./${BAKDIR}"
