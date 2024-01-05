@@ -18,7 +18,7 @@
 # ---------------------------------------------------------------------
 
 
-VERSION="2023.12.1"
+VERSION="2024.01.1"
 
 LISTFILE="wipbak-list.txt"
 
@@ -32,9 +32,17 @@ VERBOSE=
 function bakwip
 {
     dt="$1"
-    wip="$2"
+
+    # xargs removes leading and trailing spaces.
+    wip=$(echo "$2" | xargs)
+
+    if [[ -z "$wip" ]]; then
+        # Skip empty lines in list file.
+        return
+    fi
+
     if [ ! -e "$wip" ]; then
-        printf "\nERROR: File not found: %s\n" "$wip"
+        printf "\nERROR: File not found: '%s'\n" "$wip"
         printf "Make sure %s is up to date.\n\n" "$LISTFILE"
         exit 1
     fi
